@@ -1,0 +1,124 @@
+version: '3'
+
+vars:
+  COMFY_DIR: '{{.HOME}}/comfy/ComfyUI'
+  COMFY_URL: http://127.0.0.1:8188
+  MATERIALS: materials.yaml
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - go-task --list
+    silent: true
+
+  batch:
+    desc: Generate every material in materials.yaml
+    deps: [check-server]
+    cmds:
+      - ./massif.py batch {{.MATERIALS}}
+
+  one:
+    desc: 'Generate a single material by name — go-task one -- granite'
+    deps: [check-server]
+    cmds:
+      - ./massif.py batch {{.MATERIALS}} --only {{.CLI_ARGS}}
+
+  dry:
+    desc: Build and validate every graph without generating anything
+    cmds:
+      - ./massif.py batch {{.MATERIALS}} --dry-run --keep
+
+  new:
+    desc: 'Ad-hoc material — go-task new NAME=mud PROMPT="seamless tileable texture of ..."'
+    deps: [check-server]
+    requires:
+      vars: [NAME, PROMPT]
+    cmds:
+      - ./massif.py new --name {{.NAME}} --prompt {{.PROMPT | quote}} --run
+
+  edit:
+    desc: 'Build one material into the ComfyUI sidebar to tweak by hand — go-task edit -- granite'
+    cmds:
+      - ./massif.py batch {{.MATERIALS}} --only {{.CLI_ARGS}} --dry-run --keep
+      - cp blueprints/massif_{{.CLI_ARGS}}.json {{.COMFY_DIR}}/user/default/workflows/
+      - 'echo "installed: massif_{{.CLI_ARGS}} — reload the ComfyUI tab"'
+
+  list:
+    desc: List built workflows and exported material sets
+    cmds:
+      - './massif.py list || true'
+      - 'echo; echo "exported:"'
+      - 'ls outputs/*.json 2>/dev/null | xargs -r -n1 basename || echo "  (none yet)"'
+    silent: true
+
+  # --- server -------------------------------------------------------------
+
+  check-server:
+    internal: true
+    status:
+      - curl -sf -o /dev/null {{.COMFY_URL}}/
+    cmds:
+      - 'echo "ComfyUI not responding — starting it"'
+      - task: up
+
+  up:
+    desc: Start ComfyUI in the background
+    status:
+      - curl -sf -o /dev/null {{.COMFY_URL}}/
+    cmds:
+      - comfy launch --background -- --enable-manager
+      - until curl -sf -o /dev/null {{.COMFY_URL}}/; do sleep 2; done
+      - 'echo "ComfyUI up at {{.COMFY_URL}}"'
+
+  down:
+    desc: Stop ComfyUI
+    cmds:
+      - 'pgrep -f "[m]ain\.py" | xargs -r kill'
+
+  restart:
+    desc: Restart ComfyUI — needed after editing the custom nodes
+    cmds:
+      - task: down
+      - rm -rf nodes/ComfyUI-MassifTex/__pycache__
+      - sleep 3
+      - task: up
+
+  ui:
+    desc: Open ComfyUI in the browser
+    deps: [up]
+    cmds:
+      - xdg-open {{.COMFY_URL}} >/dev/null 2>&1 &
+
+  # --- housekeeping -------------------------------------------------------
+
+  nodes:
+    desc: Verify the MassifTex nodes are loaded on the server
+    deps: [up]
+    cmds:
+      - comfy --json nodes search Massif
+
+  clean:
+    desc: Delete generated graph JSONs (keeps the recipe and exports)
+    cmds:
+      - 'find blueprints -name "massif_*.json" ! -name "*.recipe.json" -delete'
+      - 'echo "cleaned blueprints/"'
+
+  clean-outputs:
+    desc: Delete exported texture sets — destructive, asks first
+    prompt: Delete every exported texture in outputs/?
+    cmds:
+      - rm -f outputs/T_*.png outputs/T_*.json
+      - 'echo "cleaned outputs/"'
+
+  probe:
+    desc: Cheap 1024 albedo look tests for the whole probes.yaml set
+    deps: [check-server]
+    cmds:
+      - ./massif.py probe probes.yaml
+
+  probe-only:
+    desc: 'Probe a subset — go-task probe-only -- meadow_grass,scree_fine'
+    deps: [check-server]
+    cmds:
+      - ./massif.py probe probes.yaml --only {{.CLI_ARGS}}

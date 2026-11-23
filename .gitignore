@@ -1,0 +1,17 @@
+# Generated: rerun the pipelines to rebuild
+outputs/
+textures/probes/
+textures/review/
+
+# ComfyUI run logs
+.comfy/
+
+# Reference images from the web, not ours to redistribute
+textures/references/
+
+# Downloaded CC0 photo bases (see textures/assets/photo/SOURCES.md)
+textures/assets/photo/*
+!textures/assets/photo/SOURCES.md
+
+__pycache__/
+*.pyc

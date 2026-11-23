@@ -1,0 +1,29 @@
+# Massif music beds — ACE-Step v1 3.5B, instrumental only.
+# Two moods for a calm mountain resort builder: a default "building" bed and a
+# quieter one for menus / low-activity. 120s each, long enough that the loop
+# does not announce itself.
+output_prefix: outputs/music
+
+foreach:
+  - id: music_build_day
+    seed: 4101
+    tags: "ambient orchestral, alpine folk, warm strings, soft acoustic guitar, gentle woodwind, light celesta, slow tempo, calm, hopeful, pastoral, instrumental, no drums, no vocals"
+  - id: music_build_evening
+    seed: 4202
+    tags: "ambient, sparse solo piano, warm pad, soft cello, very slow, quiet, contemplative, cosy, wintry, instrumental, no percussion, no vocals"
+  - id: music_menu
+    seed: 4303
+    tags: "minimal ambient, sustained strings, soft synth pad, distant horn, extremely slow, spacious, still, unobtrusive, instrumental, no drums, no vocals"
+
+pipeline:
+  - fragment: ace_step_music
+    alias: track
+    params:
+      tags: $item.tags
+      # ACE-Step wants an explicit instrumental marker; leaving lyrics blank
+      # makes it more likely to hallucinate a vocal line.
+      lyrics: "[instrumental]"
+      seed: $item.seed
+      seconds: 120
+      steps: 60
+      filename_prefix: $item.id

@@ -1,0 +1,266 @@
+# Massif texture set.
+#
+# Every prompt should keep the capture-condition tail — CHORD reads baked
+# lighting as albedo, so the input has to look like a flat-lit scan:
+#   "top-down orthographic scan, flat even diffuse lighting, no shadows,
+#    photogrammetry material scan, extreme micro detail"
+#
+# Run the lot:      go-task batch
+# Run one:          go-task one -- granite
+# Build without running: go-task dry
+
+defaults:
+  size: 8192
+  engine: unreal
+  detail: 0.5
+  negative: >-
+    blurry, soft focus, vignette, drop shadow, baked lighting, specular
+    highlights, watermark, text, border, frame, perspective, object, low detail
+
+materials:
+  # --- Sölden / Ötztal bedrock -------------------------------------------
+  # The Ötztal-Stubai Complex is polymetamorphic basement: paragneiss and mica
+  # schist dominate, with orthogneiss and amphibolite intercalated. Foliation
+  # (banding) is the defining visual feature — not the even crystal speckle of
+  # a true granite.
+
+  - name: oetztal_paragneiss
+    seed: 5312
+    # Foliation is low-relief, so the normal needs a hard push to read in engine.
+    detail: 1.1
+    # Saturated lichen colours blow out into lava-like veins; keep them muted and
+    # name the banding as layering rather than as fractures.
+    negative: >-
+      cracks, fissures, lava, magma, molten, glowing, orange glow, dried mud,
+      saturated colour, blurry, soft focus, vignette, drop shadow, baked lighting,
+      specular highlights, watermark, text, border, frame, perspective, object
+    prompt: >-
+      seamless tileable texture of Oetztal paragneiss bedrock, strongly foliated
+      banded metamorphic rock, continuous parallel layering, alternating pale grey
+      quartz-feldspar bands and thin dark biotite mica bands, silvery mica sheen,
+      shallow open folds in the banding, glacially polished surface with fine
+      parallel striations, sparse muted grey-green lichen film,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: oetztal_mica_schist
+    seed: 917
+    # Schist is glittery; the mica flakes are the point, so push micro-relief.
+    detail: 0.75
+    prompt: >-
+      seamless tileable texture of Oetztal mica schist, dense silvery muscovite and
+      dark biotite flakes aligned in wavy schistosity planes, glittering reflective
+      cleavage surfaces, small dark red garnet porphyroblasts embedded in the fabric,
+      thin quartz segregation lenses,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: oetztal_amphibolite
+    seed: 3480
+    prompt: >-
+      seamless tileable texture of Oetztal amphibolite, dark green-black
+      fine-grained metamorphic rock, dense hornblende needles with pale plagioclase
+      speckle, faint foliation, weathered rind with rust staining along cracks,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: oxidized_rusty_schist
+    seed: 6704
+    # The only warm-hued rock in the set — it exists to break the grey repetition
+    # on high slopes. Same lava failure mode as paragneiss: rust reads as glowing
+    # magma unless the negative names it out.
+    detail: 0.9
+    negative: >-
+      lava, magma, molten, glowing, ember, orange glow, fire, saturated orange,
+      dried mud, blurry, soft focus, vignette, drop shadow, baked lighting,
+      specular highlights, watermark, text, border, frame, perspective, object
+    prompt: >-
+      seamless tileable texture of iron-stained shattered alpine schist, blocky
+      angular plates with sharp fresh edges, matte rust-brown and ochre limonite
+      staining over grey-green rock, oxidised weathering rind thickest along
+      fracture planes, unstained grey rock showing where plates have split,
+      dry crumbly grit in the gaps, sparse pale crustose lichen,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: mossy_bedrock_slab
+    seed: 1583
+    # Glacially planed slab: relief is almost all in the moss cushions, not the
+    # rock, so the height map needs the moss to sit clearly proud of the stone.
+    detail: 0.9
+    prompt: >-
+      seamless tileable texture of glacially polished gneiss slab under moss,
+      smooth rounded rock surface with fine parallel glacial striations, irregular
+      patches of dark green and blackish moss cushions sitting proud of the stone,
+      thin grass blades and sedge rooted in the cracks, damp matte rock between
+      the patches, silt collected in shallow hollows,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  # --- Northern Limestone Alps band --------------------------------------
+  # A second rock-face class alongside the Oetztal crystalline basement: pale
+  # bedded limestone, karst-weathered. Kept separate on purpose — the two are
+  # different mask classes and must never be blended into one another.
+
+  - name: limestone_cliff_face
+    seed: 2941
+    # Face-on rather than top-down: this is a wall material, and a top-down
+    # capture makes the solution flutes run the wrong way.
+    detail: 1.1
+    negative: >-
+      brick, masonry, mortar, regular grid, tiles, cut stone, concrete, blurry,
+      soft focus, vignette, drop shadow, baked lighting, specular highlights,
+      watermark, text, border, frame, perspective, object
+    prompt: >-
+      seamless tileable texture of pale grey bedded limestone cliff face,
+      horizontal bedding planes with recessed shale partings, vertical Karren
+      solution flutes cut into the rock, dark grey rain streaks running down from
+      ledges, dissolved pitted karst surface, pale yellow and grey-green crustose
+      lichen crust, hairline joints,
+      face-on orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: scree_limestone
+    seed: 5127
+    # Limestone talus is much paler and platier than the crystalline scree, and
+    # that contrast is the reason it is a separate material.
+    detail: 0.7
+    prompt: >-
+      seamless tileable texture of pale limestone scree fan, flat angular platy
+      fragments of chalky off-white and light grey rock, thin tabular clasts
+      overlapping at shallow angles, bright white broken faces beside dull
+      weathered grey ones, fine pale carbonate dust filling the gaps,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  # --- glacier forefield --------------------------------------------------
+  # Moraine is not scree: scree is angular, sorted by size and one lithology,
+  # till is chaotic, poorly sorted and polychrome because the glacier carried
+  # it in from everywhere.
+
+  - name: moraine_till
+    seed: 3762
+    # Chunky clasts — the biggest relief range in the set.
+    detail: 1.0
+    prompt: >-
+      seamless tileable texture of glacial moraine till, poorly sorted stones from
+      pebble to boulder size jumbled together, mixture of rounded glacially worn
+      cobbles and freshly angular blocks, many different rock types side by side in
+      pale grey, buff, rust-brown and near-black, some cobbles faceted and striated,
+      fine grey gravel and silty matrix packed between them,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: moraine_till_grassy
+    seed: 3763
+    # Same ground a few decades after deglaciation. Shares the till seed lineage
+    # deliberately so the two read as the same deposit at two stages.
+    detail: 0.95
+    prompt: >-
+      seamless tileable texture of vegetated glacial moraine, poorly sorted stones
+      from pebble to boulder size in a silty gravel matrix, irregular patches of
+      short alpine grass and green cushion plants colonising the gaps between the
+      stones, moss creeping onto the lower stone flanks, bare cobbles still
+      dominating, tiny scattered wildflowers,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: stream_gravel_wet
+    seed: 4488
+    # Wetness has to live in the roughness channel, not as painted highlights —
+    # the negative carries the weight here.
+    detail: 0.6
+    negative: >-
+      water surface, ripples, waves, reflections, caustics, specular highlights,
+      wet gloss sheen, blurry, soft focus, vignette, drop shadow, baked lighting,
+      watermark, text, border, frame, perspective, object
+    prompt: >-
+      seamless tileable texture of alpine stream bed gravel, densely packed
+      water-rounded pebbles and cobbles sorted to similar size, smooth flattened
+      shapes in grey, white, buff and dark green-grey, darkened damp tone,
+      fine sand and grit settled in the gaps, faint algal film on the shaded sides,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: scree_fine_fan
+    seed: 6015
+    # Fine uniform talus: low relief on purpose, so it stays a flat-looking fan
+    # next to the coarse `scree` rather than competing with it.
+    detail: 0.4
+    prompt: >-
+      seamless tileable texture of fine alpine talus fan, small uniformly sized
+      angular rock chips over compacted grey grit, even monotone grey surface with
+      subtle downslope grading and faint parallel rill channels, sparse larger
+      fragments resting on top, dusty matte finish,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  # --- generic alpine cover ----------------------------------------------
+
+  - name: granite
+    seed: 1147
+    prompt: >-
+      seamless tileable texture of weathered alpine granite bedrock, fine feldspar
+      and quartz crystal grain, hairline fracture network, faint pale lichen crust,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: slate
+    seed: 88
+    prompt: >-
+      seamless tileable texture of dark wet alpine slate shingle, thin fractured
+      plates stacked at shallow angles, damp moss creeping between the layers,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: scree
+    seed: 4021
+    prompt: >-
+      seamless tileable texture of loose alpine scree, angular shattered rock
+      fragments of mixed size packed together, grit and dust in the gaps,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: snowpack
+    seed: 731
+    # Snow is near-white and low-contrast; a stronger detail blend keeps the
+    # wind crust legible in the normal map.
+    detail: 0.8
+    prompt: >-
+      seamless tileable texture of wind-crusted alpine snowpack, sastrugi ridges,
+      granular refrozen surface, faint blue shadow in the hollows,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: alpine_turf
+    seed: 2266
+    prompt: >-
+      seamless tileable texture of high alpine turf, tight cushion grasses and
+      dry sedge over peaty soil, small embedded pebbles, sparse tiny wildflowers,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: alpine_turf_hummock
+    seed: 8390
+    # The lumpy wet-flat variant of `alpine_turf`. Hummocks are decimetre-scale,
+    # so this one carries real displacement rather than surface detail.
+    detail: 1.0
+    prompt: >-
+      seamless tileable texture of hummocky alpine moss turf, rounded bulging
+      cushions of bright and dark green moss packed against each other, deep damp
+      hollows between the mounds, short sedge and grass tufts sprouting from the
+      crowns, peaty soil and small pebbles showing in the gaps, uneven lumpy surface,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: alpine_path_gravel
+    seed: 7205
+    # Service road / hiking trail surface. Compacted, so relief stays shallow.
+    detail: 0.55
+    prompt: >-
+      seamless tileable texture of compacted alpine gravel path, crushed angular
+      grey stone chips pressed into a fine dusty silt binder, embedded flush
+      pebbles, faint parallel wheel ruts with looser gravel between them, scattered
+      loose chips on top, dry pale dust film, occasional dry grass blade,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail

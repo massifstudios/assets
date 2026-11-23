@@ -1,0 +1,485 @@
+{
+  "152": {
+    "inputs": {
+      "seed": 4101,
+      "steps": 60,
+      "cfg": 5,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "149",
+        0
+      ],
+      "positive": [
+        "114",
+        0
+      ],
+      "negative": [
+        "144",
+        0
+      ],
+      "latent_image": [
+        "117",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "118": {
+    "inputs": {
+      "samples": [
+        "152",
+        0
+      ],
+      "vae": [
+        "140",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "144": {
+    "inputs": {
+      "conditioning": [
+        "114",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "Conditioning Zero Out"
+    }
+  },
+  "114": {
+    "inputs": {
+      "tags": "ambient orchestral, alpine folk, warm strings, soft acoustic guitar, gentle woodwind, light celesta, slow tempo, calm, hopeful, pastoral, instrumental, no drums, no vocals",
+      "lyrics": "[instrumental]",
+      "lyrics_strength": 0.9900000000000002,
+      "clip": [
+        "140",
+        1
+      ]
+    },
+    "class_type": "TextEncodeAceStepAudio",
+    "_meta": {
+      "title": "TextEncodeAceStepAudio"
+    }
+  },
+  "150": {
+    "inputs": {
+      "multiplier": 1.0000000000000002
+    },
+    "class_type": "LatentOperationTonemapReinhard",
+    "_meta": {
+      "title": "LatentOperationTonemapReinhard"
+    }
+  },
+  "159": {
+    "inputs": {
+      "filename_prefix": "music_build_day",
+      "audio": [
+        "118",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "140": {
+    "inputs": {
+      "ckpt_name": "ace_step_v1_3.5b.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "117": {
+    "inputs": {
+      "seconds": 120,
+      "batch_size": 1
+    },
+    "class_type": "EmptyAceStepLatentAudio",
+    "_meta": {
+      "title": "Empty Ace Step 1.0 Latent Audio"
+    }
+  },
+  "149": {
+    "inputs": {
+      "model": [
+        "151",
+        0
+      ],
+      "operation": [
+        "150",
+        0
+      ]
+    },
+    "class_type": "LatentApplyOperationCFG",
+    "_meta": {
+      "title": "LatentApplyOperationCFG"
+    }
+  },
+  "151": {
+    "inputs": {
+      "shift": 5.000000000000001,
+      "model": [
+        "140",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "ModelSamplingSD3"
+    }
+  },
+  "212": {
+    "inputs": {
+      "seed": 4202,
+      "steps": 60,
+      "cfg": 5,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "209",
+        0
+      ],
+      "positive": [
+        "174",
+        0
+      ],
+      "negative": [
+        "204",
+        0
+      ],
+      "latent_image": [
+        "177",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "178": {
+    "inputs": {
+      "samples": [
+        "212",
+        0
+      ],
+      "vae": [
+        "200",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "204": {
+    "inputs": {
+      "conditioning": [
+        "174",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "Conditioning Zero Out"
+    }
+  },
+  "174": {
+    "inputs": {
+      "tags": "ambient, sparse solo piano, warm pad, soft cello, very slow, quiet, contemplative, cosy, wintry, instrumental, no percussion, no vocals",
+      "lyrics": "[instrumental]",
+      "lyrics_strength": 0.9900000000000002,
+      "clip": [
+        "200",
+        1
+      ]
+    },
+    "class_type": "TextEncodeAceStepAudio",
+    "_meta": {
+      "title": "TextEncodeAceStepAudio"
+    }
+  },
+  "210": {
+    "inputs": {
+      "multiplier": 1.0000000000000002
+    },
+    "class_type": "LatentOperationTonemapReinhard",
+    "_meta": {
+      "title": "LatentOperationTonemapReinhard"
+    }
+  },
+  "219": {
+    "inputs": {
+      "filename_prefix": "music_build_evening",
+      "audio": [
+        "178",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "200": {
+    "inputs": {
+      "ckpt_name": "ace_step_v1_3.5b.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "177": {
+    "inputs": {
+      "seconds": 120,
+      "batch_size": 1
+    },
+    "class_type": "EmptyAceStepLatentAudio",
+    "_meta": {
+      "title": "Empty Ace Step 1.0 Latent Audio"
+    }
+  },
+  "209": {
+    "inputs": {
+      "model": [
+        "211",
+        0
+      ],
+      "operation": [
+        "210",
+        0
+      ]
+    },
+    "class_type": "LatentApplyOperationCFG",
+    "_meta": {
+      "title": "LatentApplyOperationCFG"
+    }
+  },
+  "211": {
+    "inputs": {
+      "shift": 5.000000000000001,
+      "model": [
+        "200",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "ModelSamplingSD3"
+    }
+  },
+  "272": {
+    "inputs": {
+      "seed": 4303,
+      "steps": 60,
+      "cfg": 5,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "269",
+        0
+      ],
+      "positive": [
+        "234",
+        0
+      ],
+      "negative": [
+        "264",
+        0
+      ],
+      "latent_image": [
+        "237",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "238": {
+    "inputs": {
+      "samples": [
+        "272",
+        0
+      ],
+      "vae": [
+        "260",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "264": {
+    "inputs": {
+      "conditioning": [
+        "234",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "Conditioning Zero Out"
+    }
+  },
+  "234": {
+    "inputs": {
+      "tags": "minimal ambient, sustained strings, soft synth pad, distant horn, extremely slow, spacious, still, unobtrusive, instrumental, no drums, no vocals",
+      "lyrics": "[instrumental]",
+      "lyrics_strength": 0.9900000000000002,
+      "clip": [
+        "260",
+        1
+      ]
+    },
+    "class_type": "TextEncodeAceStepAudio",
+    "_meta": {
+      "title": "TextEncodeAceStepAudio"
+    }
+  },
+  "270": {
+    "inputs": {
+      "multiplier": 1.0000000000000002
+    },
+    "class_type": "LatentOperationTonemapReinhard",
+    "_meta": {
+      "title": "LatentOperationTonemapReinhard"
+    }
+  },
+  "279": {
+    "inputs": {
+      "filename_prefix": "music_menu",
+      "audio": [
+        "238",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "260": {
+    "inputs": {
+      "ckpt_name": "ace_step_v1_3.5b.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "237": {
+    "inputs": {
+      "seconds": 120,
+      "batch_size": 1
+    },
+    "class_type": "EmptyAceStepLatentAudio",
+    "_meta": {
+      "title": "Empty Ace Step 1.0 Latent Audio"
+    }
+  },
+  "269": {
+    "inputs": {
+      "model": [
+        "271",
+        0
+      ],
+      "operation": [
+        "270",
+        0
+      ]
+    },
+    "class_type": "LatentApplyOperationCFG",
+    "_meta": {
+      "title": "LatentApplyOperationCFG"
+    }
+  },
+  "271": {
+    "inputs": {
+      "shift": 5.000000000000001,
+      "model": [
+        "260",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "ModelSamplingSD3"
+    }
+  },
+  "_meta": {
+    "schema": "compose/1",
+    "blueprint": "/home/moritz/Documents/massif-audio-generation/blueprints/music.yaml",
+    "items": {
+      "music_build_day": {
+        "nodes": [
+          "114",
+          "117",
+          "118",
+          "140",
+          "144",
+          "149",
+          "150",
+          "151",
+          "152",
+          "159"
+        ],
+        "save_node": null,
+        "prefix": "outputs/music/music_build_day"
+      },
+      "music_build_evening": {
+        "nodes": [
+          "174",
+          "177",
+          "178",
+          "200",
+          "204",
+          "209",
+          "210",
+          "211",
+          "212",
+          "219"
+        ],
+        "save_node": null,
+        "prefix": "outputs/music/music_build_evening"
+      },
+      "music_menu": {
+        "nodes": [
+          "234",
+          "237",
+          "238",
+          "260",
+          "264",
+          "269",
+          "270",
+          "271",
+          "272",
+          "279"
+        ],
+        "save_node": null,
+        "prefix": "outputs/music/music_menu"
+      }
+    }
+  }
+}

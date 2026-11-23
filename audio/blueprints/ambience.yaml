@@ -1,0 +1,37 @@
+# Massif ambience beds — Stable Audio Open 1.0, one graph, N parallel branches.
+# Three takes per sound so there is something to choose between; seeds are fixed
+# so any take can be reproduced exactly.
+output_prefix: outputs/ambience
+
+foreach:
+  - id: wind_leaves_01
+    seed: 101
+    prompt: "wind blowing through the leaves of tall trees, dense foliage rustling, steady mountain breeze, outdoor field recording, natural ambience, stereo, no music, no speech"
+  - id: wind_leaves_02
+    seed: 202
+    prompt: "strong gusts of wind moving through a forest canopy, leaves and branches rustling and swaying, rising and falling gusts, outdoor field recording, natural ambience, no music, no speech"
+  - id: wind_leaves_03
+    seed: 303
+    prompt: "gentle breeze in summer trees, soft continuous leaf rustle, quiet alpine meadow edge, distant wind, outdoor field recording, natural ambience, no music, no speech"
+  - id: birds_01
+    seed: 111
+    prompt: "small songbirds chirping in a forest, layered bird calls near and far, calm morning, outdoor field recording, natural ambience, no music, no speech"
+  - id: birds_02
+    seed: 222
+    prompt: "dawn chorus of birds, many species of songbirds chirping and trilling, sparse and airy, open mountain woodland, outdoor field recording, natural ambience, no music, no speech"
+  - id: birds_03
+    seed: 333
+    prompt: "occasional bird chirps and short whistles over quiet air, sparse alpine birdsong, high altitude, outdoor field recording, natural ambience, no music, no speech"
+
+pipeline:
+  - fragment: stable_audio_sfx
+    alias: sfx
+    params:
+      prompt: $item.prompt
+      # Steer away from the music bias Stable Audio Open carries from its training set.
+      negative_prompt: "music, melody, instruments, drums, singing, speech, voices, hum, hiss, distortion, low quality"
+      seed: $item.seed
+      seconds: 45.0
+      steps: 60
+      cfg: 5.0
+      filename_prefix: $item.id

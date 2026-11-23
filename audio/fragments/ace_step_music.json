@@ -1,0 +1,230 @@
+{
+ "_fragment": {
+  "name": "ace_step_music",
+  "description": "ACE-Step v1 3.5B text-to-music. Decomposed from audio_ace_step_1_t2a_instrumentals; MP3 save swapped for lossless FLAC.",
+  "terminal": false,
+  "source": "ref/ace1.json",
+  "inputs": {},
+  "outputs": {},
+  "params": {
+   "ksampler_sampler_name": {
+    "type": "STRING",
+    "binds": "52.sampler_name",
+    "default": "euler"
+   },
+   "ksampler_scheduler": {
+    "type": "STRING",
+    "binds": "52.scheduler",
+    "default": "simple"
+   },
+   "ksampler_denoise": {
+    "type": "INT",
+    "binds": "52.denoise",
+    "default": 1
+   },
+   "textencodeacestepaudio_lyrics_strength": {
+    "type": "FLOAT",
+    "binds": "14.lyrics_strength",
+    "default": 0.9900000000000002
+   },
+   "latentoperationtonemapreinhard_multiplier": {
+    "type": "FLOAT",
+    "binds": "50.multiplier",
+    "default": 1.0000000000000002
+   },
+   "load_checkpoint_ckpt_name": {
+    "type": "STRING",
+    "binds": "40.ckpt_name",
+    "default": "ace_step_v1_3.5b.safetensors"
+   },
+   "empty_ace_step_1_0_latent_audio_batch_size": {
+    "type": "INT",
+    "binds": "17.batch_size",
+    "default": 1
+   },
+   "modelsamplingsd3_shift": {
+    "type": "FLOAT",
+    "binds": "51.shift",
+    "default": 5.000000000000001
+   },
+   "filename_prefix": {
+    "type": "STRING",
+    "binds": "59.filename_prefix",
+    "default": "audio/ComfyUI"
+   },
+   "tags": {
+    "type": "STRING",
+    "binds": "14.tags",
+    "default": "anime, kawaii pop, j-pop, childish, piano, guitar, synthesizer, fast, happy, cheerful, lighthearted"
+   },
+   "lyrics": {
+    "type": "STRING",
+    "binds": "14.lyrics",
+    "default": "[instrumental]\n[break down]\n[drum fill]\n[chopped samples]\n"
+   },
+   "seconds": {
+    "type": "INT",
+    "binds": "17.seconds",
+    "default": 30
+   },
+   "seed": {
+    "type": "INT",
+    "binds": "52.seed",
+    "default": 257025689259434
+   },
+   "steps": {
+    "type": "INT",
+    "binds": "52.steps",
+    "default": 50
+   },
+   "cfg": {
+    "type": "INT",
+    "binds": "52.cfg",
+    "default": 5
+   }
+  }
+ },
+ "52": {
+  "inputs": {
+   "seed": 257025689259434,
+   "steps": 50,
+   "cfg": 5,
+   "sampler_name": "euler",
+   "scheduler": "simple",
+   "denoise": 1,
+   "model": [
+    "49",
+    0
+   ],
+   "positive": [
+    "14",
+    0
+   ],
+   "negative": [
+    "44",
+    0
+   ],
+   "latent_image": [
+    "17",
+    0
+   ]
+  },
+  "class_type": "KSampler",
+  "_meta": {
+   "title": "KSampler"
+  }
+ },
+ "18": {
+  "inputs": {
+   "samples": [
+    "52",
+    0
+   ],
+   "vae": [
+    "40",
+    2
+   ]
+  },
+  "class_type": "VAEDecodeAudio",
+  "_meta": {
+   "title": "VAE Decode Audio"
+  }
+ },
+ "44": {
+  "inputs": {
+   "conditioning": [
+    "14",
+    0
+   ]
+  },
+  "class_type": "ConditioningZeroOut",
+  "_meta": {
+   "title": "Conditioning Zero Out"
+  }
+ },
+ "14": {
+  "inputs": {
+   "tags": "anime, kawaii pop, j-pop, childish, piano, guitar, synthesizer, fast, happy, cheerful, lighthearted",
+   "lyrics": "[instrumental]\n[break down]\n[drum fill]\n[chopped samples]\n",
+   "lyrics_strength": 0.9900000000000002,
+   "clip": [
+    "40",
+    1
+   ]
+  },
+  "class_type": "TextEncodeAceStepAudio",
+  "_meta": {
+   "title": "TextEncodeAceStepAudio"
+  }
+ },
+ "50": {
+  "inputs": {
+   "multiplier": 1.0000000000000002
+  },
+  "class_type": "LatentOperationTonemapReinhard",
+  "_meta": {
+   "title": "LatentOperationTonemapReinhard"
+  }
+ },
+ "59": {
+  "inputs": {
+   "filename_prefix": "audio/ComfyUI",
+   "audio": [
+    "18",
+    0
+   ]
+  },
+  "class_type": "SaveAudio",
+  "_meta": {
+   "title": "Save Audio (FLAC)"
+  }
+ },
+ "40": {
+  "inputs": {
+   "ckpt_name": "ace_step_v1_3.5b.safetensors"
+  },
+  "class_type": "CheckpointLoaderSimple",
+  "_meta": {
+   "title": "Load Checkpoint"
+  }
+ },
+ "17": {
+  "inputs": {
+   "seconds": 30,
+   "batch_size": 1
+  },
+  "class_type": "EmptyAceStepLatentAudio",
+  "_meta": {
+   "title": "Empty Ace Step 1.0 Latent Audio"
+  }
+ },
+ "49": {
+  "inputs": {
+   "model": [
+    "51",
+    0
+   ],
+   "operation": [
+    "50",
+    0
+   ]
+  },
+  "class_type": "LatentApplyOperationCFG",
+  "_meta": {
+   "title": "LatentApplyOperationCFG"
+  }
+ },
+ "51": {
+  "inputs": {
+   "shift": 5.000000000000001,
+   "model": [
+    "40",
+    0
+   ]
+  },
+  "class_type": "ModelSamplingSD3",
+  "_meta": {
+   "title": "ModelSamplingSD3"
+  }
+ }
+}

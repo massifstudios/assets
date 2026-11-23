@@ -1,0 +1,782 @@
+{
+  "104": {
+    "inputs": {
+      "ckpt_name": "stable-audio-open-1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "106": {
+    "inputs": {
+      "text": "wind blowing through the leaves of tall trees, dense foliage rustling, steady mountain breeze, outdoor field recording, natural ambience, stereo, no music, no speech",
+      "clip": [
+        "110",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "107": {
+    "inputs": {
+      "text": "music, melody, instruments, drums, singing, speech, voices, hum, hiss, distortion, low quality",
+      "clip": [
+        "110",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "110": {
+    "inputs": {
+      "clip_name": "t5-base.safetensors",
+      "type": "stable_audio",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "111": {
+    "inputs": {
+      "seconds": 45.0,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentAudio",
+    "_meta": {
+      "title": "Empty Latent Audio"
+    }
+  },
+  "103": {
+    "inputs": {
+      "seed": 101,
+      "steps": 60,
+      "cfg": 5.0,
+      "sampler_name": "dpmpp_3m_sde_gpu",
+      "scheduler": "exponential",
+      "denoise": 1,
+      "model": [
+        "104",
+        0
+      ],
+      "positive": [
+        "106",
+        0
+      ],
+      "negative": [
+        "107",
+        0
+      ],
+      "latent_image": [
+        "111",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "112": {
+    "inputs": {
+      "samples": [
+        "103",
+        0
+      ],
+      "vae": [
+        "104",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "119": {
+    "inputs": {
+      "filename_prefix": "wind_leaves_01",
+      "audio": [
+        "112",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "162": {
+    "inputs": {
+      "ckpt_name": "stable-audio-open-1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "164": {
+    "inputs": {
+      "text": "strong gusts of wind moving through a forest canopy, leaves and branches rustling and swaying, rising and falling gusts, outdoor field recording, natural ambience, no music, no speech",
+      "clip": [
+        "168",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "165": {
+    "inputs": {
+      "text": "music, melody, instruments, drums, singing, speech, voices, hum, hiss, distortion, low quality",
+      "clip": [
+        "168",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "168": {
+    "inputs": {
+      "clip_name": "t5-base.safetensors",
+      "type": "stable_audio",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "169": {
+    "inputs": {
+      "seconds": 45.0,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentAudio",
+    "_meta": {
+      "title": "Empty Latent Audio"
+    }
+  },
+  "161": {
+    "inputs": {
+      "seed": 202,
+      "steps": 60,
+      "cfg": 5.0,
+      "sampler_name": "dpmpp_3m_sde_gpu",
+      "scheduler": "exponential",
+      "denoise": 1,
+      "model": [
+        "162",
+        0
+      ],
+      "positive": [
+        "164",
+        0
+      ],
+      "negative": [
+        "165",
+        0
+      ],
+      "latent_image": [
+        "169",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "170": {
+    "inputs": {
+      "samples": [
+        "161",
+        0
+      ],
+      "vae": [
+        "162",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "177": {
+    "inputs": {
+      "filename_prefix": "wind_leaves_02",
+      "audio": [
+        "170",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "220": {
+    "inputs": {
+      "ckpt_name": "stable-audio-open-1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "222": {
+    "inputs": {
+      "text": "gentle breeze in summer trees, soft continuous leaf rustle, quiet alpine meadow edge, distant wind, outdoor field recording, natural ambience, no music, no speech",
+      "clip": [
+        "226",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "223": {
+    "inputs": {
+      "text": "music, melody, instruments, drums, singing, speech, voices, hum, hiss, distortion, low quality",
+      "clip": [
+        "226",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "226": {
+    "inputs": {
+      "clip_name": "t5-base.safetensors",
+      "type": "stable_audio",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "227": {
+    "inputs": {
+      "seconds": 45.0,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentAudio",
+    "_meta": {
+      "title": "Empty Latent Audio"
+    }
+  },
+  "219": {
+    "inputs": {
+      "seed": 303,
+      "steps": 60,
+      "cfg": 5.0,
+      "sampler_name": "dpmpp_3m_sde_gpu",
+      "scheduler": "exponential",
+      "denoise": 1,
+      "model": [
+        "220",
+        0
+      ],
+      "positive": [
+        "222",
+        0
+      ],
+      "negative": [
+        "223",
+        0
+      ],
+      "latent_image": [
+        "227",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "228": {
+    "inputs": {
+      "samples": [
+        "219",
+        0
+      ],
+      "vae": [
+        "220",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "235": {
+    "inputs": {
+      "filename_prefix": "wind_leaves_03",
+      "audio": [
+        "228",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "278": {
+    "inputs": {
+      "ckpt_name": "stable-audio-open-1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "280": {
+    "inputs": {
+      "text": "small songbirds chirping in a forest, layered bird calls near and far, calm morning, outdoor field recording, natural ambience, no music, no speech",
+      "clip": [
+        "284",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "281": {
+    "inputs": {
+      "text": "music, melody, instruments, drums, singing, speech, voices, hum, hiss, distortion, low quality",
+      "clip": [
+        "284",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "284": {
+    "inputs": {
+      "clip_name": "t5-base.safetensors",
+      "type": "stable_audio",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "285": {
+    "inputs": {
+      "seconds": 45.0,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentAudio",
+    "_meta": {
+      "title": "Empty Latent Audio"
+    }
+  },
+  "277": {
+    "inputs": {
+      "seed": 111,
+      "steps": 60,
+      "cfg": 5.0,
+      "sampler_name": "dpmpp_3m_sde_gpu",
+      "scheduler": "exponential",
+      "denoise": 1,
+      "model": [
+        "278",
+        0
+      ],
+      "positive": [
+        "280",
+        0
+      ],
+      "negative": [
+        "281",
+        0
+      ],
+      "latent_image": [
+        "285",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "286": {
+    "inputs": {
+      "samples": [
+        "277",
+        0
+      ],
+      "vae": [
+        "278",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "293": {
+    "inputs": {
+      "filename_prefix": "birds_01",
+      "audio": [
+        "286",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "336": {
+    "inputs": {
+      "ckpt_name": "stable-audio-open-1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "338": {
+    "inputs": {
+      "text": "dawn chorus of birds, many species of songbirds chirping and trilling, sparse and airy, open mountain woodland, outdoor field recording, natural ambience, no music, no speech",
+      "clip": [
+        "342",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "339": {
+    "inputs": {
+      "text": "music, melody, instruments, drums, singing, speech, voices, hum, hiss, distortion, low quality",
+      "clip": [
+        "342",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "342": {
+    "inputs": {
+      "clip_name": "t5-base.safetensors",
+      "type": "stable_audio",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "343": {
+    "inputs": {
+      "seconds": 45.0,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentAudio",
+    "_meta": {
+      "title": "Empty Latent Audio"
+    }
+  },
+  "335": {
+    "inputs": {
+      "seed": 222,
+      "steps": 60,
+      "cfg": 5.0,
+      "sampler_name": "dpmpp_3m_sde_gpu",
+      "scheduler": "exponential",
+      "denoise": 1,
+      "model": [
+        "336",
+        0
+      ],
+      "positive": [
+        "338",
+        0
+      ],
+      "negative": [
+        "339",
+        0
+      ],
+      "latent_image": [
+        "343",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "344": {
+    "inputs": {
+      "samples": [
+        "335",
+        0
+      ],
+      "vae": [
+        "336",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "351": {
+    "inputs": {
+      "filename_prefix": "birds_02",
+      "audio": [
+        "344",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "394": {
+    "inputs": {
+      "ckpt_name": "stable-audio-open-1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "396": {
+    "inputs": {
+      "text": "occasional bird chirps and short whistles over quiet air, sparse alpine birdsong, high altitude, outdoor field recording, natural ambience, no music, no speech",
+      "clip": [
+        "400",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "397": {
+    "inputs": {
+      "text": "music, melody, instruments, drums, singing, speech, voices, hum, hiss, distortion, low quality",
+      "clip": [
+        "400",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "400": {
+    "inputs": {
+      "clip_name": "t5-base.safetensors",
+      "type": "stable_audio",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "401": {
+    "inputs": {
+      "seconds": 45.0,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentAudio",
+    "_meta": {
+      "title": "Empty Latent Audio"
+    }
+  },
+  "393": {
+    "inputs": {
+      "seed": 333,
+      "steps": 60,
+      "cfg": 5.0,
+      "sampler_name": "dpmpp_3m_sde_gpu",
+      "scheduler": "exponential",
+      "denoise": 1,
+      "model": [
+        "394",
+        0
+      ],
+      "positive": [
+        "396",
+        0
+      ],
+      "negative": [
+        "397",
+        0
+      ],
+      "latent_image": [
+        "401",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "402": {
+    "inputs": {
+      "samples": [
+        "393",
+        0
+      ],
+      "vae": [
+        "394",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAE Decode Audio"
+    }
+  },
+  "409": {
+    "inputs": {
+      "filename_prefix": "birds_03",
+      "audio": [
+        "402",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "Save Audio (FLAC)"
+    }
+  },
+  "_meta": {
+    "schema": "compose/1",
+    "blueprint": "/home/moritz/Documents/massif-audio-generation/blueprints/ambience.yaml",
+    "items": {
+      "wind_leaves_01": {
+        "nodes": [
+          "103",
+          "104",
+          "106",
+          "107",
+          "110",
+          "111",
+          "112",
+          "119"
+        ],
+        "save_node": null,
+        "prefix": "outputs/ambience/wind_leaves_01"
+      },
+      "wind_leaves_02": {
+        "nodes": [
+          "161",
+          "162",
+          "164",
+          "165",
+          "168",
+          "169",
+          "170",
+          "177"
+        ],
+        "save_node": null,
+        "prefix": "outputs/ambience/wind_leaves_02"
+      },
+      "wind_leaves_03": {
+        "nodes": [
+          "219",
+          "220",
+          "222",
+          "223",
+          "226",
+          "227",
+          "228",
+          "235"
+        ],
+        "save_node": null,
+        "prefix": "outputs/ambience/wind_leaves_03"
+      },
+      "birds_01": {
+        "nodes": [
+          "277",
+          "278",
+          "280",
+          "281",
+          "284",
+          "285",
+          "286",
+          "293"
+        ],
+        "save_node": null,
+        "prefix": "outputs/ambience/birds_01"
+      },
+      "birds_02": {
+        "nodes": [
+          "335",
+          "336",
+          "338",
+          "339",
+          "342",
+          "343",
+          "344",
+          "351"
+        ],
+        "save_node": null,
+        "prefix": "outputs/ambience/birds_02"
+      },
+      "birds_03": {
+        "nodes": [
+          "393",
+          "394",
+          "396",
+          "397",
+          "400",
+          "401",
+          "402",
+          "409"
+        ],
+        "save_node": null,
+        "prefix": "outputs/ambience/birds_03"
+      }
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "recipe": "massif_pbr",
+  "description": "Seamless hyperrealistic PBR material: SDXL tiling base -> hires refine -> CHORD SVBRDF -> 8K seamless upscale with normal detail recovery -> engine export.",
+  "params": {
+    "prompt":           {"type": "string"},
+    "material_name":    {"type": "string"},
+    "negative":         {"type": "string", "default": "blurry, soft focus, vignette, drop shadow, baked lighting, specular highlights, watermark, text, border, frame, perspective, object, low detail"},
+    "seed":             {"type": "int",    "default": 1},
+    "base_steps":       {"type": "int",    "default": 32},
+    "refine_steps":     {"type": "int",    "default": 20},
+    "cfg":              {"type": "float",  "default": 5.5},
+    "base_size":        {"type": "int",    "default": 1024},
+    "refine_size":      {"type": "int",    "default": 2048},
+    "refine_denoise":   {"type": "float",  "default": 0.45},
+    "target_size":      {"type": "int",    "default": 8192},
+    "detail_strength":  {"type": "float",  "default": 0.5},
+    "ao_strength":      {"type": "float",  "default": 0.75},
+    "ckpt_name":        {"type": "string", "default": "RealVisXL_V5.0_fp16.safetensors"},
+    "chord_ckpt":       {"type": "string", "default": "chord_v1.safetensors"},
+    "upscaler":         {"type": "string", "default": "4x-UltraSharp.pth"},
+    "engine":           {"type": "string", "default": "unreal"},
+    "output_dir":       {"type": "string", "default": "massif"}
+  },
+  "ops": [
+    {"op": "add_node", "class_type": "CheckpointLoaderSimple", "as": "ckpt"},
+    {"op": "add_node", "class_type": "SeamlessTile",           "as": "tile_model"},
+    {"op": "add_node", "class_type": "MakeCircularVAE",        "as": "tile_vae"},
+    {"op": "add_node", "class_type": "CLIPTextEncode",         "as": "pos"},
+    {"op": "add_node", "class_type": "CLIPTextEncode",         "as": "neg"},
+    {"op": "add_node", "class_type": "EmptyLatentImage",       "as": "latent"},
+    {"op": "add_node", "class_type": "KSampler",               "as": "base"},
+    {"op": "add_node", "class_type": "LatentUpscale",          "as": "latent_up"},
+    {"op": "add_node", "class_type": "KSampler",               "as": "refine"},
+    {"op": "add_node", "class_type": "VAEDecode",              "as": "decode"},
+
+    {"op": "add_node", "class_type": "ChordLoadModel",          "as": "chord"},
+    {"op": "add_node", "class_type": "ChordMaterialEstimation", "as": "mat"},
+    {"op": "add_node", "class_type": "ChordNormalToHeight",     "as": "n2h"},
+
+    {"op": "add_node", "class_type": "UpscaleModelLoader",       "as": "up_model"},
+    {"op": "add_node", "class_type": "MassifSeamlessUpscale",    "as": "bc_8k"},
+    {"op": "add_node", "class_type": "MassifSeamlessUpscale",    "as": "n_8k"},
+    {"op": "add_node", "class_type": "MassifSeamlessUpscale",    "as": "r_8k"},
+    {"op": "add_node", "class_type": "MassifSeamlessUpscale",    "as": "m_8k"},
+    {"op": "add_node", "class_type": "MassifSeamlessUpscale",    "as": "h_8k"},
+    {"op": "add_node", "class_type": "MassifNormalDetailBlend",  "as": "n_detail"},
+    {"op": "add_node", "class_type": "MassifAOFromHeight",       "as": "ao"},
+    {"op": "add_node", "class_type": "MassifPBRExport",          "as": "export"},
+
+    {"op": "add_node", "class_type": "MassifTilePreview", "as": "preview"},
+    {"op": "add_node", "class_type": "SaveImage",         "as": "save_preview"},
+
+    {"op": "connect", "from": "ckpt.MODEL",     "to": "tile_model.model"},
+    {"op": "connect", "from": "ckpt.VAE",       "to": "tile_vae.vae"},
+    {"op": "connect", "from": "ckpt.CLIP",      "to": "pos.clip"},
+    {"op": "connect", "from": "ckpt.CLIP",      "to": "neg.clip"},
+
+    {"op": "connect", "from": "tile_model.MODEL", "to": "base.model"},
+    {"op": "connect", "from": "pos.CONDITIONING", "to": "base.positive"},
+    {"op": "connect", "from": "neg.CONDITIONING", "to": "base.negative"},
+    {"op": "connect", "from": "latent.LATENT",    "to": "base.latent_image"},
+
+    {"op": "connect", "from": "base.LATENT",      "to": "latent_up.samples"},
+    {"op": "connect", "from": "tile_model.MODEL", "to": "refine.model"},
+    {"op": "connect", "from": "pos.CONDITIONING", "to": "refine.positive"},
+    {"op": "connect", "from": "neg.CONDITIONING", "to": "refine.negative"},
+    {"op": "connect", "from": "latent_up.LATENT", "to": "refine.latent_image"},
+
+    {"op": "connect", "from": "refine.LATENT",  "to": "decode.samples"},
+    {"op": "connect", "from": "tile_vae.VAE",   "to": "decode.vae"},
+
+    {"op": "connect", "from": "chord.chord_model", "to": "mat.chord_model"},
+    {"op": "connect", "from": "decode.IMAGE",      "to": "mat.image"},
+    {"op": "connect", "from": "mat.normal",        "to": "n2h.normal"},
+
+    {"op": "connect", "from": "up_model.UPSCALE_MODEL", "to": "bc_8k.upscale_model"},
+    {"op": "connect", "from": "mat.basecolor",   "to": "bc_8k.image"},
+    {"op": "connect", "from": "mat.normal",      "to": "n_8k.image"},
+    {"op": "connect", "from": "mat.roughness",   "to": "r_8k.image"},
+    {"op": "connect", "from": "mat.metalness",   "to": "m_8k.image"},
+    {"op": "connect", "from": "n2h.height",      "to": "h_8k.image"},
+
+    {"op": "connect", "from": "n_8k.IMAGE",   "to": "n_detail.normal"},
+    {"op": "connect", "from": "bc_8k.IMAGE",  "to": "n_detail.detail_source"},
+    {"op": "connect", "from": "h_8k.IMAGE",   "to": "ao.height"},
+
+    {"op": "connect", "from": "bc_8k.IMAGE",    "to": "export.basecolor"},
+    {"op": "connect", "from": "n_detail.IMAGE", "to": "export.normal"},
+    {"op": "connect", "from": "r_8k.IMAGE",     "to": "export.roughness"},
+    {"op": "connect", "from": "m_8k.IMAGE",     "to": "export.metalness"},
+    {"op": "connect", "from": "h_8k.IMAGE",     "to": "export.height"},
+    {"op": "connect", "from": "ao.IMAGE",       "to": "export.ao"},
+
+    {"op": "connect", "from": "mat.basecolor",  "to": "preview.image"},
+    {"op": "connect", "from": "preview.IMAGE",  "to": "save_preview.images"},
+
+    {"op": "set_widget", "node": "ckpt",       "widget": "ckpt_name",  "value": "${ckpt_name}"},
+    {"op": "set_widget", "node": "tile_model", "widget": "tiling",     "value": "enable"},
+    {"op": "set_widget", "node": "tile_model", "widget": "copy_model", "value": "Make a copy"},
+    {"op": "set_widget", "node": "tile_vae",   "widget": "tiling",     "value": "enable"},
+    {"op": "set_widget", "node": "tile_vae",   "widget": "copy_vae",   "value": "Make a copy"},
+
+    {"op": "set_widget", "node": "pos", "widget": "text", "value": "${prompt}"},
+    {"op": "set_widget", "node": "neg", "widget": "text", "value": "${negative}"},
+
+    {"op": "set_widget", "node": "latent", "widget": "width",      "value": "${base_size}"},
+    {"op": "set_widget", "node": "latent", "widget": "height",     "value": "${base_size}"},
+    {"op": "set_widget", "node": "latent", "widget": "batch_size", "value": 1},
+
+    {"op": "set_widget", "node": "base", "widget": "seed",         "value": "${seed}"},
+    {"op": "set_widget", "node": "base", "widget": "steps",        "value": "${base_steps}"},
+    {"op": "set_widget", "node": "base", "widget": "cfg",          "value": "${cfg}"},
+    {"op": "set_widget", "node": "base", "widget": "sampler_name", "value": "dpmpp_2m"},
+    {"op": "set_widget", "node": "base", "widget": "scheduler",    "value": "karras"},
+    {"op": "set_widget", "node": "base", "widget": "denoise",      "value": 1.0},
+
+    {"op": "set_widget", "node": "latent_up", "widget": "upscale_method", "value": "bislerp"},
+    {"op": "set_widget", "node": "latent_up", "widget": "width",          "value": "${refine_size}"},
+    {"op": "set_widget", "node": "latent_up", "widget": "height",         "value": "${refine_size}"},
+    {"op": "set_widget", "node": "latent_up", "widget": "crop",           "value": "disabled"},
+
+    {"op": "set_widget", "node": "refine", "widget": "seed",         "value": "${seed}"},
+    {"op": "set_widget", "node": "refine", "widget": "steps",        "value": "${refine_steps}"},
+    {"op": "set_widget", "node": "refine", "widget": "cfg",          "value": "${cfg}"},
+    {"op": "set_widget", "node": "refine", "widget": "sampler_name", "value": "dpmpp_2m"},
+    {"op": "set_widget", "node": "refine", "widget": "scheduler",    "value": "karras"},
+    {"op": "set_widget", "node": "refine", "widget": "denoise",      "value": "${refine_denoise}"},
+
+    {"op": "set_widget", "node": "chord",    "widget": "ckpt_name",  "value": "${chord_ckpt}"},
+    {"op": "set_widget", "node": "up_model", "widget": "model_name", "value": "${upscaler}"},
+
+    {"op": "set_widget", "node": "bc_8k", "widget": "target_size", "value": "${target_size}"},
+    {"op": "set_widget", "node": "bc_8k", "widget": "pad",         "value": 64},
+    {"op": "set_widget", "node": "n_8k",  "widget": "target_size", "value": "${target_size}"},
+    {"op": "set_widget", "node": "r_8k",  "widget": "target_size", "value": "${target_size}"},
+    {"op": "set_widget", "node": "m_8k",  "widget": "target_size", "value": "${target_size}"},
+    {"op": "set_widget", "node": "h_8k",  "widget": "target_size", "value": "${target_size}"},
+
+    {"op": "set_widget", "node": "n_detail", "widget": "strength",         "value": "${detail_strength}"},
+    {"op": "set_widget", "node": "n_detail", "widget": "highpass_radius",  "value": 8},
+    {"op": "set_widget", "node": "n_detail", "widget": "invert_detail",    "value": false},
+
+    {"op": "set_widget", "node": "ao", "widget": "strength", "value": "${ao_strength}"},
+    {"op": "set_widget", "node": "ao", "widget": "radius",   "value": 16},
+
+    {"op": "set_widget", "node": "export", "widget": "name",               "value": "${material_name}"},
+    {"op": "set_widget", "node": "export", "widget": "output_dir",         "value": "${output_dir}"},
+    {"op": "set_widget", "node": "export", "widget": "engine",             "value": "${engine}"},
+    {"op": "set_widget", "node": "export", "widget": "write_16bit_height", "value": true},
+
+    {"op": "set_widget", "node": "preview",      "widget": "tiles",           "value": 3},
+    {"op": "set_widget", "node": "preview",      "widget": "max_size",        "value": 1536},
+    {"op": "set_widget", "node": "save_preview", "widget": "filename_prefix", "value": "massif_tilecheck"}
+  ]
+}

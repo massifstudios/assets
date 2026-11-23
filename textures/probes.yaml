@@ -1,0 +1,503 @@
+# Look tests for the Massif terrain set, art-directed from the autumn Ötztal
+# valley reference plus the green alpine meadow reference.
+#
+#   go-task probe                      # all of them
+#   go-task probe-only -- meadow_grass,scree_fine
+#
+# Albedo only at 1024, ~8s each. Settle the look here, then promote winners
+# into materials.yaml for the full 8K PBR run.
+#
+# Two lessons paid for in failed rounds:
+#
+#  1. Never name a thing you don't want, even negated. "snow-free ledges"
+#     produced snow. Unwanted things go in `negative`, never in `prompt`.
+#  2. Text-to-image alone collapses top-down organic ground into dried mud
+#     cracks or the wrong plant. Those materials set `image:` and start from a
+#     CC0 photo instead (see assets/photo/SOURCES.md); the prompt then only has
+#     to steer species and colour, not invent the structure.
+
+defaults:
+  size: 1024
+  steps: 26
+  cfg: 5.5
+  denoise: 0.55        # only used by probes that set `image:`
+  negative: >-
+    sky, horizon, mountain landscape, scenery, perspective, depth of field,
+    cast shadow, hard sunlight, blurry, vignette, watermark, text, border,
+    dry stone wall, masonry, bricks, mortar
+
+probes:
+  # --- ground cover: seeded from CC0 photos --------------------------------
+
+  - name: meadow_grass
+    image: grass_dense.jpg
+    denoise: 0.5
+    seed: 210
+    negative: >-
+      straw, hay, dried grass, wheat, fur, animal hair, mowed lawn, garden turf,
+      artificial grass, golf course, neon green, oversaturated, large flowers,
+      clover blooms, sky, perspective, cast shadow, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, bright fresh green alpine meadow seen from directly
+      above, fine dense grass blades, scattered tiny yellow and violet wildflowers,
+      a few small grey stones half buried in the sward, natural colour variation,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: alpine_grass_dry
+    # It is soil with grass in it, not grass with soil in it — seeding from the
+    # dirt scan gives the bare ground; the prompt grows the tufts on top.
+    image: dirt_gravel.jpg
+    denoise: 0.62
+    seed: 3391
+    negative: >-
+      mowed lawn, garden turf, astroturf, artificial grass, uniform green, flat green,
+      moss, lichen blobs, bubbles, fur, animal hair, carpet, hay, straw bale,
+      neon green, oversaturated, mud cracks,
+      cgi, 3d render, stylized, plastic, clay,
+      sky, perspective, cast shadow, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, photograph from directly above of dry stony alpine
+      ground with sparse grass, scattered clumps of short wiry grass blades in green
+      and straw tones growing out of gritty brown soil, bare soil and small angular
+      stones covering much of the surface, natural colour variation,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: alpine_heath_red
+    seed: 1580
+    cfg: 4.5
+    negative: >-
+      green, verdant, fresh green leaves, succulent, jade plant, berries, fruit,
+      clusters, boulders, large stones, autumn tree leaves, pine needles,
+      cgi, 3d render, videogame asset, stylized, plastic, clay, smooth shading,
+      neon, fluorescent, oversaturated,
+      sky, perspective, cast shadow, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, photograph of alpine dwarf shrub heath in late autumn
+      from directly above, dense low mat of tiny rust red and copper brown leaves on
+      fine woody stems, grey lichen threads and dark peaty soil showing through,
+      muted desaturated natural colour,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: gravel_road
+    # Austrian alpine tracks are crushed limestone/dolomite — pale grey-white, and
+    # compacted: the chippings sit half-buried in their own dust rather than loose.
+    # Seeded from our pale scree probe (right stone, right colour) and pushed toward
+    # a packed surface; seeding from the brown dirt scan needed so much denoise to
+    # lose the brown that the aggregate dissolved into a slab.
+    image: seed_scree_fine.png
+    denoise: 0.55
+    seed: 664
+    negative: >-
+      loose scree, loose stones, scattered rubble, sharp raised edges, deep gaps,
+      brown, tan, ochre, beige, sandy, mud, warm colour, saturated colour, dark grey,
+      solid rock slab, cracked slab, bedrock, asphalt, tarmac, paving, wood,
+      cgi, 3d render, stylized, plastic, clay,
+      sky, perspective, cast shadow, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, photograph from directly above of a well used Austrian
+      alpine forest track, small angular crushed limestone chippings half buried and
+      compacted into a matrix of chalky pale grey white stone dust, flat wheel-packed
+      surface, only the tops of the stones showing, powdery bright limestone dust,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  # --- loose rock ----------------------------------------------------------
+
+  - name: scree_fine
+    seed: 4720
+    cfg: 4.0
+    negative: >-
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, wax, smooth shading, airbrushed, illustration,
+      orange, rust, saturated colour, sand, beach, gravel driveway, arranged stones,
+      sky, perspective, cast shadow, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, photograph of a fine alpine scree slope from directly
+      above, loose angular rock chips of mixed small sizes settled against each other,
+      dusty broken faces, weathered grey stone with subtle brown and buff colour
+      variation, fine grit filling the gaps,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: scree_coarse
+    seed: 2038
+    cfg: 4.0
+    negative: >-
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, wax, smooth shading, airbrushed, illustration,
+      orange, rust, saturated colour, cobblestone paving, arranged stones,
+      sky, perspective, cast shadow, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, photograph of a coarse alpine talus field from
+      directly above, shattered rock slabs and blocks resting at angles against each
+      other, dust and lichen on their weathered upper faces, subtle grey brown colour
+      variation between stones, smaller chips filling the voids,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  # --- bedrock, shallow to vertical ---------------------------------------
+
+  - name: rock_shallow_slab
+    seed: 1102
+    cfg: 4.0
+    negative: >-
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, wax, smooth shading, airbrushed, illustration,
+      cobbles, river stones, pebbles, boulders, rounded stones, loose rocks,
+      green marble, polished countertop, serpentinite,
+      orange, rust, saturated colour, sky, perspective, cast shadow, blurry, text
+    prompt: >-
+      seamless tileable texture, photograph of glacially polished bedrock from directly
+      above, one continuous sheet of grey-brown gneiss worn smooth, faint parallel
+      striations, hairline cracks holding grit, flat crusty pale lichen patches,
+      subtle weathering stains, solid unbroken stone,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: rock_mid_fractured
+    seed: 875
+    cfg: 4.0
+    negative: >-
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, wax, smooth shading, airbrushed, illustration,
+      orange, rust, saturated colour, colourful, wood, bark, tree rings, dried mud, mud cracks, crazy paving, flagstone, mosaic, tiles, grout, dry stone wall, masonry, bricks, sky, perspective, cast shadow, hard sunlight, blurry, vignette, watermark, text,
+      rounded boulders, smooth pebbles, arranged stones
+    prompt: >-
+      seamless tileable texture, photograph of a weathered gneiss outcrop from directly
+      above, stone split along irregular natural fracture lines into uneven blocks at
+      different heights, foliation banding across the faces, grit and splinters wedged
+      in the seams, patchy lichen, subtle colour variation between blocks,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: rock_steep_cliff
+    seed: 5044
+    cfg: 4.0
+    negative: >-
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, wax, smooth shading, airbrushed, illustration,
+      snow, ice, frost, slate roof, roof tiles, stacked slabs, shelves,
+      orange, rust, saturated colour, colourful, wood, bark, tree rings, dried mud, mud cracks, crazy paving, flagstone, mosaic, tiles, grout, dry stone wall, masonry, bricks, sky, perspective, cast shadow, hard sunlight, blurry, vignette, watermark, text,
+    prompt: >-
+      seamless tileable texture, photograph of a near vertical alpine cliff face, dark
+      grey crystalline rock with strong vertical ribs and deep narrow clefts, sharp
+      broken edges, chaotic irregular relief, dust and pale lichen on the ledges,
+      subtle brown weathering stain, bare stone,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  # --- reference round: Oetztal photo set, round 2 -------------------------
+  # Ten materials read off the five reference photographs (see references/).
+  # Ground-truth crops the critic grades against live in references/crops/.
+  #
+  # Round 1 lost 10/10 to a blind critic. Four causes, all addressed here:
+  #
+  #  1. Baked lighting failed eight of ten. Every probe now carries the shared
+  #     `flat` negative tail below, and the pipeline gains a de-light pass before
+  #     CHORD — CHORD's own basecolour was measured and does not remove shading.
+  #  2. Loose rock collapsed into a shrinkage-crack lattice exactly as organic
+  #     ground does. The crack vocabulary now sits in the negative of every
+  #     clast material, and the prompts say *overlapping* and *resting on*.
+  #  3. The four lowland ambientCG seeds overrode their targets. Every seeded
+  #     probe now starts from an alpine-appropriate CC0 scan.
+  #  4. Nothing stated the tile's real-world size, so features came out at five
+  #     to ten times scale. Every prompt now opens by naming the 2 m patch and
+  #     gives the intended clast or leaf size in centimetres.
+
+  # Shared negative tails, spliced into each probe below by hand rather than by
+  # anchor so a single probe can drop one without dropping the rest.
+  #
+  #   flat:   ambient occlusion, contact shadow, cast shadow, drop shadow,
+  #           directional light, sunlight, rim light, specular highlight, sheen,
+  #           gloss, wet look, dew drops, water droplets, vignette
+  #   fused:  crack network, cracked surface, shrinkage cracks, dried mud,
+  #           mud cracks, crazed glaze, jigsaw pieces, interlocking cells,
+  #           flagstone, crazy paving, mosaic, grout, tiles
+  #   cgi:    cgi, 3d render, videogame asset, stylized, low poly, plastic, clay,
+  #           wax, smooth shading, airbrushed, illustration
+
+  - name: oxidized_rusty_schist
+    # Round 1 measured R-B -0.013 against a reference at +0.277: no iron staining
+    # at all, and coarse feldspar speckle made it granite. Seeded from a scan that
+    # already carries rust lichen so the hue is present before the prompt starts.
+    image: rust_rock.jpg
+    denoise: 0.65
+    seed: 6704
+    cfg: 6.5
+    negative: >-
+      lava, magma, molten, glowing, ember, fire, neon orange, fluorescent,
+      terracotta, brick, pottery, moss, green vegetation, leaves,
+      coarse white speckle, granite, salt and pepper crystals,
+      crack network, cracked surface, shrinkage cracks, dried mud, mud cracks,
+      crazed glaze, jigsaw pieces, interlocking cells, flagstone, crazy paving,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of shattered alpine schist
+      stained by iron, angular blocky plates 20 to 50 centimetres across lying at
+      slightly different heights, matte rust brown and ochre limonite crust covering
+      most of the plate faces and bleeding down from their edges, grey green stone
+      showing through only where plates have freshly split, fine parallel foliation
+      lines running across each plate, dry crumbly grit in the seams, sparse pale
+      crustose lichen,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: mossy_bedrock_slab
+    # Round 1 produced a fissured cliff panel with 30+ open cracks at 8-16 cm
+    # spacing — the opposite of a glacially planed slab. Seeded from a real slab
+    # scan and the prompt now counts the joints instead of implying many.
+    image: mossy_slab.jpg
+    denoise: 0.5
+    seed: 1583
+    cfg: 5.5
+    negative: >-
+      deep fissures, open cracks, chasm, crevice, black gaps, dense crack network,
+      shattered, broken blocks, rubble, loose stones, cobbles, boulders, pebbles,
+      bubbles, foam, sponge, coral, fur, carpet, astroturf, neon green, oversaturated,
+      crack network, cracked surface, shrinkage cracks, dried mud, mud cracks,
+      crazed glaze, jigsaw pieces, interlocking cells, flagstone, crazy paving,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of glacially polished gneiss,
+      one continuous unbroken sheet of smooth grey stone crossed by only two or three
+      long healed joints, faint parallel glacial striations scratched across the whole
+      surface, three or four irregular islands of dark green moss 30 to 60 centimetres
+      wide sitting on top of the stone, a few thin grass blades rooted at their edges,
+      damp matte stone between them, pale silt settled in the shallow hollows,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: limestone_cliff_face
+    # Round 1 produced green algal dripstone with pendant tubes — cave flowstone,
+    # not a cliff. Seeded from a bedded slab scan so the horizontal structure is
+    # in the latent from the start, and every overhang word is now negative.
+    image: cliff_bedded.jpg
+    denoise: 0.5
+    seed: 2941
+    cfg: 5.5
+    negative: >-
+      stalactite, dripstone, flowstone, tufa, pendant, hanging, drip, icicle,
+      cave, overhang, cavity, hole, tunnel, nodule, blob, melted wax,
+      algae, green film, green slime, moss carpet, saturated green,
+      dry stone wall, masonry, bricks, mortar, cut stone, concrete, regular grid, tiles,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      orange, rust, saturated colour, snow, ice, sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square panel of pale neutral grey limestone
+      cliff, five horizontal bedding planes running across the frame with slightly
+      recessed gritty parting seams between them, shallow vertical solution flutes cut
+      a few centimetres into the rock face between the beds, thin dark grey rain streaks
+      running down from each ledge, karst pitting 2 to 10 centimetres across scattered
+      over the flat faces, small pale yellow green crustose lichen spots under
+      5 centimetres, hairline joints, one flush continuous face,
+      face-on orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry material scan, extreme micro detail
+
+  - name: scree_limestone
+    # Round 1 produced a continuous cracked plane: every junction was a Y or T
+    # triple point, the topology of shrinkage, not of a clast pile. Seeded from a
+    # real rubble scan and the prompt now insists the chips overlap.
+    image: loose_platy.jpg
+    denoise: 0.58
+    seed: 5127
+    cfg: 6.5
+    negative: >-
+      continuous surface, solid slab, fused stone, plane, flush, seamless plane,
+      crack network, cracked surface, shrinkage cracks, dried mud, mud cracks,
+      crazed glaze, jigsaw pieces, interlocking cells, flagstone, crazy paving,
+      mosaic, grout, tiles, cobblestone paving, arranged stones,
+      rounded pebbles, river stones, boulders, sand, beach,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      dark grey, black, sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of loose limestone scree,
+      hundreds of separate flat tabular chips between 3 and 20 centimetres long lying
+      loose on top of one another at random angles, each chip with its own free edge
+      overlapping the chip beneath it, a range of sizes from small splinters up to
+      hand sized plates, chalky off white and warm buff broken faces beside dull
+      weathered grey ones, fine pale carbonate dust and small splinters filling the
+      voids between the pile,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: scree_fine_fan
+    # Round 1 was the worst crack collapse of the set: 13.07% of pixels below
+    # luma 0.06, a baked occlusion mask in fissure form. Seeded from a fine grit
+    # scan, warmed toward the reference, and floored against black.
+    image: fine_grit.jpg
+    denoise: 0.6
+    seed: 6015
+    cfg: 4.5
+    negative: >-
+      continuous surface, solid slab, fused stone, fissures, deep gaps, black gaps,
+      crack network, cracked surface, shrinkage cracks, dried mud, mud cracks,
+      crazed glaze, jigsaw pieces, interlocking cells, flagstone, crazy paving,
+      large boulders, big blocks, slabs, deep relief, strong contrast, high contrast,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      sand dunes, beach, arranged stones, sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of fine alpine talus fan,
+      small angular rock chips 1 to 4 centimetres across lying loose and overlapping
+      on a compacted grey buff grit substrate that shows through across much of the
+      frame, uniform clast size with only a few larger fragments resting on top,
+      warm grey to pale buff tone, very low contrast and even brightness overall,
+      faint parallel downslope rill channels read only as gentle tonal bands,
+      dusty matte finish,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: moraine_till
+    # Round 1 was well-sorted landscaping cobble: one clast population, no fines,
+    # saturation p95 0.143. The prompt now enumerates the size classes and the
+    # lithologies rather than relying on the word "unsorted".
+    image: stony_ground.jpg
+    denoise: 0.5
+    seed: 3762
+    cfg: 6.5
+    negative: >-
+      sorted stones, uniform stones, same size stones, graded gravel, clean stones,
+      large blocks, boulders, big stones, evenly packed stones, single stone size,
+      cobblestone paving, arranged stones, dry stone wall, gravel driveway,
+      crack network, cracked surface, shrinkage cracks, dried mud, mud cracks,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      grass, moss, vegetation, flowers, sand, beach, sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of glacial moraine till,
+      mostly small stones and coarse grit with only a few larger cobbles among them,
+      every stone a different size from the one beside it, nothing sorted or graded,
+      roughly a third of the surface being fine grey silt and grit matrix showing
+      between the stones, rounded glacially worn cobbles lying against freshly angular
+      fragments, at least four different rock types side by side including a near black
+      one, a rust brown one, a warm buff sandstone and pale grey granite,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: moraine_till_grassy
+    # Round 1 came back as a flowering chickweed meadow with under 5% stone. The
+    # coverage ratio is now stated as a number and the flowers are negative.
+    # A stone-only seed grew no plants at any denoise tried, so the seed is a
+    # composite: stony_ground with irregular low-frequency patches of a mossy
+    # ground scan blended over a third of it, built by tools/make_mixed_seed.py.
+    image: till_grassy_mix.jpg
+    denoise: 0.45
+    seed: 3763
+    cfg: 5.5
+    negative: >-
+      bare ground, no vegetation, barren, dry dead grass, brown vegetation,
+      large blocks, boulders, big stones, evenly packed stones, single stone size,
+      lichen on stones, stones coated in green, mosaic, crazy paving,
+      meadow, lawn, dense sward, continuous grass, flower meadow, daisies, chickweed,
+      white flowers, blossom, large leaves, mowed lawn, garden turf, astroturf,
+      uniform green, neon green, oversaturated, tall grass,
+      crack network, cracked surface, shrinkage cracks, dried mud, mud cracks,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, dew drops, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of glacial moraine partly
+      colonised by plants, bare stone covering about two thirds of the frame as
+      unsorted cobbles and pebbles in a silty gravel matrix, small isolated patches of
+      tight sub centimetre alpine cushion plants and short sedge growing only in the
+      hollows between the stones, dark green moss creeping a few centimetres up the
+      lower flanks of the larger stones, a very few tiny yellow flecks,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: stream_gravel_wet
+    # Round 1 read as bagged decorative pebble: saturation p95 0.844, a sheen band
+    # across the crown of every stone, luma p99 0.809 so not even dark. Wetness is
+    # now stated as a flat darkening and every gloss word is negative.
+    image: stream_cobble.jpg
+    denoise: 0.6
+    seed: 4488
+    cfg: 4.5
+    negative: >-
+      water surface, ripples, waves, reflections, caustics, sparkle,
+      glossy, shiny, mirror, polished, varnished, sheen, specular highlight, wet gloss,
+      orange, saturated colour, decorative pebbles, aquarium gravel, garden pebbles,
+      uniform ovoids, angular stones, sharp edges, crushed stone,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, dew drops, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      sand dunes, beach, mud cracks, arranged stones, sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of alpine stream bed, densely
+      packed water worn pebbles 3 to 8 centimetres across, flattened disc shapes as
+      often as ovals, muted desaturated grey, off white, pale buff and dark green grey
+      stone with no warm colours, uniformly darkened as damp stone is with no bright
+      stones anywhere, damp grey sand and grit filling every gap between them, faint
+      dark algal film on the flanks, flat even tone across each pebble face,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: alpine_turf_hummock
+    # Round 1 produced fleshy succulent rosettes with 12 cm leaves — none of the
+    # four named components were present. Seeded from a real moss scan and every
+    # leaf word that could invite a rosette is negative.
+    image: moss_cushion.jpg
+    denoise: 0.58
+    seed: 8390
+    cfg: 4.5
+    negative: >-
+      succulent, rosette, lobed leaves, fleshy leaves, cabbage, lettuce, duckweed,
+      saxifrage, houseleek, broad leaves, large leaves, waxy leaves, veins,
+      mowed lawn, garden turf, astroturf, artificial grass, uniform green, flat green,
+      neon green, oversaturated, fur, animal hair, carpet, sponge, coral, hay, straw,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, dew drops,
+      water droplets, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      mud cracks, sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of hummocky alpine moss turf,
+      rounded moss cushions 10 to 20 centimetres across packed against one another,
+      each cushion made of countless tiny moss shoots under a millimetre wide, damp
+      hollows sunk between the mounds shown only as a flatly darker olive tone, fine
+      sedge and grass blades 2 millimetres wide rising from the crowns, dark peaty
+      soil and small grey pebbles exposed in about a fifth of the frame, muted olive
+      and yellow green rather than bright green,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
+
+  - name: alpine_path_gravel
+    # Round 1 contained no gravel at any scale — pressed strawboard, luma std
+    # 0.082 against 0.16-0.22 for its siblings, hue nearly opposite the reference.
+    # Seeded from a grey chip scan at low denoise so the clasts cannot dissolve.
+    image: grey_chips.jpg
+    denoise: 0.45
+    seed: 7205
+    cfg: 4.5
+    negative: >-
+      fibres, straw, hay, sawdust, wood chips, coir, matting, strawboard, chipboard,
+      fibrous, woven, felt, directional grain,
+      brown, ochre, tan, orange, warm colour, mud, saturated colour,
+      loose scree, scattered rubble, deep gaps, sharp raised edges, boulders,
+      asphalt, tarmac, paving, cobblestone, flagstone, concrete, wood,
+      crack network, cracked surface, shrinkage cracks, dried mud, mud cracks,
+      ambient occlusion, contact shadow, cast shadow, drop shadow, directional light,
+      sunlight, rim light, specular highlight, sheen, gloss, wet look, vignette,
+      cgi, 3d render, videogame asset, stylized, low poly, plastic, clay, smooth shading,
+      sky, perspective, blurry, watermark, text
+    prompt: >-
+      seamless tileable texture, a 2 metre square patch of compacted alpine gravel
+      path, small angular crushed stone chips 1 to 3 centimetres across pressed into
+      a fine grey buff silt binder with only their upper faces showing, a scatter of
+      larger pebbles up to 6 centimetres sitting flush in the surface, neutral pale
+      grey stone with white and dark grey fragments among it, bright broken chip faces
+      standing clearly against the darker binder, dry pale dust film, two very faint
+      broad wheel ruts read only as gentle tonal bands,
+      top-down orthographic scan, flat even diffuse lighting, no shadows,
+      photogrammetry ground scan, extreme micro detail
